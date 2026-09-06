@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电子票据查验平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vant/4.10.2/index.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vant/4.10.2/vant.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "SimSun", "宋体", serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #app { width: 100%; max-width: 800px; background: #fff; min-height: 100vh; }
+
+        /* ===== 蓝色顶部 ===== */
+        .top-header {
+            background: linear-gradient(180deg, #1258a8 0%, #0a3a72 100%);
+            text-align: center;
+            padding: 24px 0 16px;
+        }
+        .top-header h1 {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: #fff;
+            font-family: "SimHei", "黑体", sans-serif;
+        }
+        .top-header .sub-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.85);
+            margin-top: 4px;
+        }
+
+        /* ===== 票据主体红色边框 ===== */
+        .receipt-box {
+            margin: 14px 20px;
+            border: 1.5px solid #c00;
+            padding: 0;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .receipt-box img {
+            width: 100%;
+            display: block;
+        }
+        .zoom-hint {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+            font-family: "SimHei", "黑体", sans-serif;
+        }
+
+        /* ===== 底部操作区 ===== */
+        .bottom-actions {
+            margin: 0 20px 24px;
+        }
+
+        /* 覆盖 Vant Cell 样式 */
+        .action-cell {
+            background: #f7f7f7 !important;
+            border: 1px solid #e0e0e0 !important;
+            border-radius: 8px !important;
+            margin-bottom: 10px;
+            padding: 14px 18px !important;
+        }
+        .action-cell .cell-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #222;
+            font-family: "SimHei", sans-serif;
+            letter-spacing: 1px;
+        }
+        .action-cell .van-cell__right-icon {
+            color: #bbb !important;
+        }
+        .action-note {
+            font-size: 11px;
+            color: #aaa;
+            text-align: center;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- 蓝色顶部 -->
+    <div class="top-header">
+        <h1>电子票据查验平台</h1>
+        <div class="sub-text">河南省医疗住院收费票据（电子）</div>
+    </div>
+
+    <!-- 票据主体（点击图片放大） -->
+    <div class="receipt-box" @click="onClickImage">
+        <img src="https://ticket12.oss-cn-qingdao.aliyuncs.com/%E5%8F%91%E7%A5%A8/invoice.png?Expires=1788664249&OSSAccessKeyId=TMP.3Kuij5eZcUybAycZmuk78FsgQzVe9nit5Hti5y8tzrLfnuAhKsGj3Xy7GdkLsXQakuvenkLpeginA6vJF8VdwF8fiQNoCV&Signature=VtoRrj11E2%2FnLVMcaYUldyWR7%2FI%3D" alt="河南省医疗住院收费票据（电子）">
+        <span class="zoom-hint">点击放大</span>
+    </div>
+
+    <!-- 底部操作区 (Vant 组件) -->
+    <div class="bottom-actions">
+        <van-cell-group inset>
+            <van-cell class="action-cell" is-link :border="false" @click="onDownload">
+                <template #title>
+                    <div class="cell-value">报销入账电子票据下载</div>
+                </template>
+            </van-cell>
+        </van-cell-group>
+        <p class="action-note">*下载的PDF文件已加盖财务专用章电子印章，可用于报销入账</p>
+    </div>
+</div>
+
+<script>
+const { createApp } = Vue;
+const app = createApp({
+    methods: {
+        onClickImage() {
+            vant.showImagePreview({
+                images: ['invoice.png'],
+                closeable: true,
+                closeIconPosition: 'top-right'
+            });
+        },
+        onDownload() {
+            vant.showDialog({
+                title: '票据下载',
+                message: '邓晨诗票据下载',
+                confirmButtonText: '确认下载',
+                showCancelButton: true,
+                cancelButtonText: '取消'
+            }).then(() => {
+                vant.showToast({ message: '下载成功', type: 'success' });
+            }).catch(() => {
+                // 用户取消
+            });
+        }
+    }
+});
+app.use(vant);
+app.mount('#app');
+</script>
+</body>
+</html>
